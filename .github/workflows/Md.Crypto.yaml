@@ -61,11 +61,11 @@ jobs:
     env:
       REPORT_XML: doc/coverage/Md.Crypto-altcover.xml
       REPORT_TARGET: doc/coverage
-      ASSEMBLY_FILTERS: -*.Tests;-AltCover.Monitor
+      ASSEMBLY_FILTERS: -*.Test;-AltCover.Monitor
     steps:
     - name: checkout
       uses: actions/checkout@v3
-    - name: run for Generic.Base.Api
+    - name: run for Md.Crypto
       run: |
         dotnet new nugetconfig
         dotnet nuget add source https://nuget.pkg.github.com/MichaelDiers/index.json --name github --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text 
@@ -73,8 +73,8 @@ jobs:
         dotnet build --configuration Release 
         dotnet test --configuration Release --no-build /p:AltCover=true --no-build --no-restore /p:AltCoverReport="${{ env.altcover-xml }}" /p:AltCoverAssemblyFilter=xunit.*
       env:
-        altcover-xml: ../../doc/coverage/Generic.Base.Api-altcover.xml
-        test-project: Md.Crypto.Tests
+        altcover-xml: ../../doc/coverage/Md.Crypto-altcover.xml
+        test-project: Md.Crypto.Test
       working-directory: Md.Crypto
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v3
