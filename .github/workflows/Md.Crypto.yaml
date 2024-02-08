@@ -61,7 +61,7 @@ jobs:
     env:
       REPORT_XML: doc/coverage/Md.Crypto-altcover.xml
       REPORT_TARGET: doc/coverage
-      ASSEMBLY_FILTERS: -*.Test;-AltCover.Monitor
+      ASSEMBLY_FILTERS: -*.Test;-AltCover.Monitor;Microsoft.*
     steps:
     - name: checkout
       uses: actions/checkout@v3
@@ -81,6 +81,12 @@ jobs:
       with:
         dotnet-version: 6.x
         dotnet-quality: 'ga'
+    - name: extract nuget version
+      run: echo "NUGET_VERSION=$(cat ${{env.CSPROJ}} | grep -Po '<Version>.+?</Version>')" >> $GITHUB_ENV
+      working-directory: Md.Crypto/Md.Crypto
+    - name: set report title
+      run: |
+        echo "REPORT_TITLE=$(echo Md.Crypto ${NUGET_VERSION} Code Coverage" >> $GITHUB_ENV
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
       with:
@@ -88,7 +94,7 @@ jobs:
         targetdir: ${{ env.REPORT_TARGET }}
         reporttypes: Html_Dark
         assemblyfilters: ${{ env.ASSEMBLY_FILTERS }}
-        title: "Md.Crypto Code Coverage"
+        title: ${{env.REPORT_TITLE}}
     - name: Setup Pages
       uses: actions/configure-pages@v3
     - name: Upload artifact
