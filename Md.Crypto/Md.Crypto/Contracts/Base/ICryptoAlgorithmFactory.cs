@@ -1,4 +1,4 @@
-﻿namespace Md.Crypto.Contracts
+﻿namespace Md.Crypto.Contracts.Base
 {
     using Md.Crypto.Contracts.Algorithms;
 

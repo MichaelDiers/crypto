@@ -1,7 +1,7 @@
 ﻿namespace Md.Crypto
 {
     using Md.Crypto.Base;
-    using Md.Crypto.Contracts;
+    using Md.Crypto.Contracts.Base;
 
     /// <summary>
     ///     Factory for creating an <see cref="ICryptoAlgorithmFactory" />

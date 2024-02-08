@@ -1,11 +1,11 @@
 ﻿namespace Md.Crypto.Base
 {
     using Md.Crypto.Algorithms;
-    using Md.Crypto.Contracts;
     using Md.Crypto.Contracts.Algorithms;
+    using Md.Crypto.Contracts.Base;
 
     /// <inheritdoc cref="ICryptoAlgorithmFactory" />
-    /// <seealso cref="Md.Crypto.Contracts.ICryptoAlgorithmFactory" />
+    /// <seealso cref="Contracts.Base.ICryptoAlgorithmFactory" />
     internal class CryptoAlgorithmFactory : ICryptoAlgorithmFactory
     {
         /// <summary>

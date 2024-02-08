@@ -1,6 +1,5 @@
 ﻿namespace Md.Crypto.Test.Base
 {
-    using Md.Crypto.Contracts;
     using Md.Crypto.Contracts.Algorithms;
 
     /// <summary>

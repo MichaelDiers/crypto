@@ -1,6 +1,6 @@
 ﻿namespace Md.Crypto.Test
 {
-    using Md.Crypto.Contracts;
+    using Md.Crypto.Contracts.Base;
 
     /// <summary>
     ///     Tests for <see cref="CryptoFactory" />.
