@@ -1,0 +1,53 @@
+name: NuGet for Md.Crypto
+on:
+  push:
+    paths:
+      - Md.Crypto/Md.Crypto/**
+      - .github/workflows/Md.Crypto.yaml
+  workflow_dispatch:
+permissions:
+  contents: write
+  packages: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      nupkg: Md.Crypto
+      push-source: https://nuget.pkg.github.com/MichaelDiers/index.json
+      working-directory: Md.Crypto
+      CSPROJ: Md.Crypto/Md.Crypto/Md.Crypto.csproj
+    steps:
+    - name: checkout
+      uses: actions/checkout@v3
+    - name: extract old nuget version
+      run: echo "OLD_VERSION=$(cat ${{env.CSPROJ}} | grep -Po '<Version>.+?</Version>')" >> $GITHUB_ENV
+    - name: extract major, minor, patch
+      run: |
+        echo "PATCH_VERSION=$(echo ${OLD_VERSION} | grep -Po '<Version>[0-9]+\.[0-9]+\.\K.*?(?=</Version>)' | awk '{print $0+1}')" >> $GITHUB_ENV
+        echo "MAJOR_MINOR_VERSION=$(echo ${OLD_VERSION} | grep -Po '<Version>\K.*?(?=[0-9]+</Version>)')" >> $GITHUB_ENV
+    - name: set new nuget version
+      run: |
+        echo "NEW_VERSION=<Version>${MAJOR_MINOR_VERSION}${PATCH_VERSION}</Version>" >> $GITHUB_ENV
+        echo "VERSION=${MAJOR_MINOR_VERSION}${PATCH_VERSION}" >> $GITHUB_ENV
+    - name: patch nuget version
+      run: sed -i "s|${OLD_VERSION}|${NEW_VERSION}|g" ${{env.CSPROJ}}
+      working-directory: ${{env.working-directory}}
+    - name: build
+      run: dotnet build --configuration Release 
+      working-directory: ${{env.working-directory}}
+    - name: Test
+      run: dotnet test --configuration Release --no-build
+      working-directory: ${{env.working-directory}}
+    - name: Pack
+      run: dotnet pack --configuration Release  --no-build --output .
+      working-directory: ${{env.working-directory}}
+    - name: Push
+      run: dotnet nuget push ${{env.nupkg}}.${VERSION}.nupkg --source ${{env.push-source}} --api-key ${{ secrets.GITHUB_TOKEN }}
+      working-directory: ${{env.working-directory}}
+    - name: Commit version patch
+      run: |
+        git config --global user.name '${{ github.actor }}'
+        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+        git add ${{env.CSPROJ}}
+        git commit -m "version update to ${VERSION}"
+        git push
