@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Md.Crypto", "Md.Crypto\Md.Crypto.csproj", "{03B123D4-D689-4789-80D3-ED79F91C099E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Md.Crypto.Test", "Md.Crypto.Test\Md.Crypto.Test.csproj", "{B87A02E1-6748-4CEF-813A-D901752732CA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03B123D4-D689-4789-80D3-ED79F91C099E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03B123D4-D689-4789-80D3-ED79F91C099E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03B123D4-D689-4789-80D3-ED79F91C099E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03B123D4-D689-4789-80D3-ED79F91C099E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B87A02E1-6748-4CEF-813A-D901752732CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B87A02E1-6748-4CEF-813A-D901752732CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B87A02E1-6748-4CEF-813A-D901752732CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B87A02E1-6748-4CEF-813A-D901752732CA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {847D116D-3B98-4057-84D2-E49FCEF35FCF}
+	EndGlobalSection
+EndGlobal
