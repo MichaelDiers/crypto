@@ -7,100 +7,13 @@ on:
   workflow_dispatch:
 permissions:
   contents: write
+  id-token: write
   packages: write
   pages: write
-  id-token: write
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    env:
-      nupkg: Md.Crypto
-      push-source: https://nuget.pkg.github.com/MichaelDiers/index.json
-      working-directory: Md.Crypto
-      CSPROJ: Md.Crypto/Md.Crypto.csproj
-    steps:
-    - name: checkout
-      uses: actions/checkout@v3
-    - name: extract old nuget version
-      run: echo "OLD_VERSION=$(cat ${{env.CSPROJ}} | grep -Po '<Version>.+?</Version>')" >> $GITHUB_ENV
-      working-directory: ${{env.working-directory}}
-    - name: extract major, minor, patch
-      run: |
-        echo "PATCH_VERSION=$(echo ${OLD_VERSION} | grep -Po '<Version>[0-9]+\.[0-9]+\.\K.*?(?=</Version>)' | awk '{print $0+1}')" >> $GITHUB_ENV
-        echo "MAJOR_MINOR_VERSION=$(echo ${OLD_VERSION} | grep -Po '<Version>\K.*?(?=[0-9]+</Version>)')" >> $GITHUB_ENV
-    - name: set new nuget version
-      run: |
-        echo "NEW_VERSION=<Version>${MAJOR_MINOR_VERSION}${PATCH_VERSION}</Version>" >> $GITHUB_ENV
-        echo "VERSION=${MAJOR_MINOR_VERSION}${PATCH_VERSION}" >> $GITHUB_ENV
-    - name: patch nuget version
-      run: sed -i "s|${OLD_VERSION}|${NEW_VERSION}|g" ${{env.CSPROJ}}
-      working-directory: ${{env.working-directory}}
-    - name: build
-      run: dotnet build --configuration Release 
-      working-directory: ${{env.working-directory}}
-    - name: Test
-      run: dotnet test --configuration Release --no-build
-      working-directory: ${{env.working-directory}}
-    - name: Pack
-      run: dotnet pack --configuration Release  --no-build --output .
-      working-directory: ${{env.working-directory}}
-    - name: Push
-      run: dotnet nuget push ${{env.nupkg}}.${VERSION}.nupkg --source ${{env.push-source}} --api-key ${{ secrets.GITHUB_TOKEN }}
-      working-directory: ${{env.working-directory}}
-    - name: Commit version patch
-      run: |
-        git config --global user.name '${{ github.actor }}'
-        git config --global user.email '${{ github.actor }}@users.noreply.github.com'
-        git add ${{env.CSPROJ}}
-        git commit -m "version update to ${VERSION}"
-        git push
-      working-directory: ${{env.working-directory}}
-  docs:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      REPORT_XML: doc/coverage/Md.Crypto-altcover.xml
-      REPORT_TARGET: doc/coverage
-      ASSEMBLY_FILTERS: -*.Test;-AltCover.Monitor;Microsoft.*
-    steps:
-    - name: checkout
-      uses: actions/checkout@v3
-    - name: run for Md.Crypto
-      run: |
-        dotnet new nugetconfig
-        dotnet nuget add source https://nuget.pkg.github.com/MichaelDiers/index.json --name github --username ${{ github.actor }} --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text 
-        dotnet add ${{env.test-project}} package altcover
-        dotnet build --configuration Release 
-        dotnet test --configuration Release --no-build /p:AltCover=true --no-build --no-restore /p:AltCoverReport="${{ env.altcover-xml }}" /p:AltCoverAssemblyFilter=xunit.*
-      env:
-        altcover-xml: ../../doc/coverage/Md.Crypto-altcover.xml
-        test-project: Md.Crypto.Test
-      working-directory: Md.Crypto
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.x
-        dotnet-quality: 'ga'
-    - name: extract nuget version
-      run: echo "NUGET_VERSION=$(cat ${{env.CSPROJ}} | grep -Po '<Version>.+?</Version>')" >> $GITHUB_ENV
-      working-directory: Md.Crypto/Md.Crypto
-    - name: set report title
-      run: |
-        echo "REPORT_TITLE=$(echo Md.Crypto ${NUGET_VERSION} Code Coverage" >> $GITHUB_ENV
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.1.26
-      with:
-        reports: ${{ env.REPORT_XML }}
-        targetdir: ${{ env.REPORT_TARGET }}
-        reporttypes: Html_Dark
-        assemblyfilters: ${{ env.ASSEMBLY_FILTERS }}
-        title: ${{env.REPORT_TITLE}}
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
-      with:
-        path: ${{ env.REPORT_TARGET }}
-    - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+  create-nuget-code-coverage-page:
+    uses: MichaelDiers/github-workflows/.github/workflows/dotnet-nuget-code-coverage-page.yaml@main
+    with:
+      project-name: Md.Crypto
+      solution-directory: Md.Crypto
+      test-project-name: Md.Crypto.Test
