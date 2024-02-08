@@ -15,12 +15,13 @@ jobs:
       nupkg: Md.Crypto
       push-source: https://nuget.pkg.github.com/MichaelDiers/index.json
       working-directory: Md.Crypto
-      CSPROJ: Md.Crypto/Md.Crypto/Md.Crypto.csproj
+      CSPROJ: Md.Crypto/Md.Crypto.csproj
     steps:
     - name: checkout
       uses: actions/checkout@v3
     - name: extract old nuget version
       run: echo "OLD_VERSION=$(cat ${{env.CSPROJ}} | grep -Po '<Version>.+?</Version>')" >> $GITHUB_ENV
+      working-directory: ${{env.working-directory}}
     - name: extract major, minor, patch
       run: |
         echo "PATCH_VERSION=$(echo ${OLD_VERSION} | grep -Po '<Version>[0-9]+\.[0-9]+\.\K.*?(?=</Version>)' | awk '{print $0+1}')" >> $GITHUB_ENV
@@ -51,3 +52,4 @@ jobs:
         git add ${{env.CSPROJ}}
         git commit -m "version update to ${VERSION}"
         git push
+      working-directory: ${{env.working-directory}}
