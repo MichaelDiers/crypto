@@ -5,7 +5,7 @@
     /// <summary>
     ///     The entry point for using rsa.
     /// </summary>
-    public interface IRsa : IBuilder<IAsymmetricBuildResult>
+    public interface IRsa : IKeySize<IBuilder<IAsymmetricBuildResult>, IAsymmetricBuildResult>
     {
     }
 }

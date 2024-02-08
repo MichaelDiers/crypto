@@ -11,12 +11,17 @@
         [Fact]
         public void Build()
         {
-            var factory = CryptoFactory.Create();
-            var aes = factory.UseAes();
-
-            var buildResult = aes.Build();
+            var aes = CryptoFactory.Create().UseAes().Build();
 
             Assert.IsAssignableFrom<ISymmetricBuildResult>(aes);
+        }
+
+        [Fact]
+        public void SetKeySize()
+        {
+            var aes = CryptoFactory.Create().UseAes().SetKeySize(1000);
+
+            Assert.IsAssignableFrom<IBuilder<ISymmetricBuildResult>>(aes);
         }
     }
 }

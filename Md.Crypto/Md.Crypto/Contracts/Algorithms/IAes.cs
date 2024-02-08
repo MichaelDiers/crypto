@@ -5,7 +5,7 @@
     /// <summary>
     ///     The entry point for using aes.
     /// </summary>
-    public interface IAes : IBuilder<ISymmetricBuildResult>
+    public interface IAes : IKeySize<IBuilder<ISymmetricBuildResult>, ISymmetricBuildResult>
     {
     }
 }

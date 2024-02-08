@@ -11,12 +11,17 @@
         [Fact]
         public void Build()
         {
-            var factory = CryptoFactory.Create();
-            var rsa = factory.UseRsa();
+            var rsa = CryptoFactory.Create().UseRsa().Build();
 
-            var buildResult = rsa.Build();
+            Assert.IsAssignableFrom<IAsymmetricBuildResult>(rsa);
+        }
 
-            Assert.IsAssignableFrom<IAsymmetricBuildResult>(buildResult);
+        [Fact]
+        public void SetKeySize()
+        {
+            var rsa = CryptoFactory.Create().UseRsa().SetKeySize(1024);
+
+            Assert.IsAssignableFrom<IBuilder<IAsymmetricBuildResult>>(rsa);
         }
     }
 }
