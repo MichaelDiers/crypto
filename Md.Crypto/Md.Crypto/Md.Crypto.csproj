@@ -15,7 +15,7 @@
     <Description>A library for using crypthographic algorithms.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/MichaelDiers/crypto</RepositoryUrl>
-    <Version>0.0.12</Version>
+    <Version>0.0.13</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
