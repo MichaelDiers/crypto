@@ -2,28 +2,79 @@
 {
     using System.Security.Cryptography;
     using Md.Crypto.Contracts.Algorithms;
+    using Md.Crypto.Contracts.Base;
 
-    /// <inheritdoc cref="IAes" />
-    /// <seealso cref="IAes" />
-    internal class Aes : IAes
+    internal class Aes : IAesKeyCreator, ISymmetricKey
     {
         /// <summary>
         ///     The default key size.
         /// </summary>
         private const int DefaultKeySize = 256;
 
+        private byte[] iv;
+
+        private byte[] secretKey;
+
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="Aes" /> class.
+        /// </summary>
+        public Aes()
+        {
+            using var aes = System.Security.Cryptography.Aes.Create();
+            this.secretKey = aes.Key;
+            this.iv = aes.IV;
+        }
+
+        /// <summary>
+        ///     Creates a new default aes key.
+        /// </summary>
+        /// <returns>A symmetric key for encrypting and decrypting text using aes.</returns>
+        ISymmetricKey IAesKeyCreator.Create()
+        {
+            return ((IAesKeyCreator) this).Create(Aes.DefaultKeySize);
+        }
+
+        /// <summary>
+        ///     Creates a new aes key.
+        /// </summary>
+        /// <param name="keySize">The length of the secret key in bits.</param>
+        /// <returns>A symmetric key for encrypting and decrypting text using aes.</returns>
+        ISymmetricKey IAesKeyCreator.Create(int keySize)
+        {
+            using var aes = System.Security.Cryptography.Aes.Create();
+            aes.KeySize = keySize;
+
+            this.secretKey = aes.Key;
+            this.iv = aes.IV;
+
+            return this;
+        }
+
+        /// <summary>
+        ///     Initializes the aes secret key.
+        /// </summary>
+        /// <param name="key">The secret key.</param>
+        /// ///
+        /// <param name="iv">The initialization vector.</param>
+        /// <returns>A symmetric key for encrypting and decrypting text using aes.</returns>
+        ISymmetricKey IAesKeyCreator.Create(byte[] key, byte[] iv)
+        {
+            this.secretKey = key;
+            this.iv = iv;
+
+            return this;
+        }
+
         /// <summary>
         ///     Decrypts the specified text.
         /// </summary>
-        /// <param name="iv">The initialization vector.</param>
-        /// <param name="text">The encrypted text.</param>
-        /// <param name="key">The secret key.</param>
-        /// <returns>The decryption result.</returns>
-        public string Decrypt(byte[] key, byte[] iv, byte[] text)
+        /// <param name="text">The text.</param>
+        /// <returns>The decrypted text.</returns>
+        string ISymmetricKey.Decrypt(byte[] text)
         {
             using var aes = System.Security.Cryptography.Aes.Create();
-            aes.Key = key;
-            aes.IV = iv;
+            aes.Key = this.secretKey;
+            aes.IV = this.iv;
 
             var decryptor = aes.CreateDecryptor(
                 aes.Key,
@@ -44,42 +95,12 @@
         ///     Encrypts the specified text.
         /// </summary>
         /// <param name="text">The text.</param>
-        /// <returns>The encryption result.</returns>
-        public IAesResult Encrypt(string text)
-        {
-            return this.Encrypt(
-                Aes.DefaultKeySize,
-                text);
-        }
-
-        /// <summary>
-        ///     Encrypts the specified text.
-        /// </summary>
-        /// <param name="keySize">The size of the key in bits.</param>
-        /// <param name="text">The text.</param>
-        /// <returns>The encryption result.</returns>
-        public IAesResult Encrypt(int keySize, string text)
+        /// <returns>The encrypted text.</returns>
+        byte[] ISymmetricKey.Encrypt(string text)
         {
             using var aes = System.Security.Cryptography.Aes.Create();
-            aes.KeySize = Aes.DefaultKeySize;
-            return this.Encrypt(
-                aes.Key,
-                aes.IV,
-                text);
-        }
-
-        /// <summary>
-        ///     Encrypts the specified text.
-        /// </summary>
-        /// <param name="iv">The initialization vector.</param>
-        /// <param name="text">The text.</param>
-        /// <param name="key">The secret key.</param>
-        /// <returns>The encryption result.</returns>
-        public IAesResult Encrypt(byte[] key, byte[] iv, string text)
-        {
-            using var aes = System.Security.Cryptography.Aes.Create();
-            aes.Key = key;
-            aes.IV = iv;
+            aes.Key = this.secretKey;
+            aes.IV = this.iv;
 
             using var encryptor = aes.CreateEncryptor(
                 aes.Key,
@@ -95,12 +116,7 @@
                 streamWriter.Write(text);
             }
 
-            var encrypted = memoryStream.ToArray();
-
-            return new AesResult(
-                key,
-                iv,
-                encrypted);
+            return memoryStream.ToArray();
         }
     }
 }

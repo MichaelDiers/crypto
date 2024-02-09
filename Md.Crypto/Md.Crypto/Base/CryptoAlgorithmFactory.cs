@@ -9,10 +9,10 @@
     internal class CryptoAlgorithmFactory : ICryptoAlgorithmFactory
     {
         /// <summary>
-        ///     Use AES.
+        ///     Initialize an aes key creator.
         /// </summary>
-        /// <returns>The entry point for using aes.</returns>
-        public IAes UseAes()
+        /// <returns>A key creator for aes secret keys.</returns>
+        public IAesKeyCreator UseAes()
         {
             return new Aes();
         }

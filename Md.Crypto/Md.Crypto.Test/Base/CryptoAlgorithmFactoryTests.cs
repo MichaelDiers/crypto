@@ -17,7 +17,7 @@
             var factory = CryptoFactory.Create();
             var aes = factory.UseAes();
 
-            Assert.IsAssignableFrom<IAes>(aes);
+            Assert.IsAssignableFrom<IAesKeyCreator>(aes);
         }
 
         /// <summary>

@@ -8,10 +8,10 @@
     public interface ICryptoAlgorithmFactory
     {
         /// <summary>
-        ///     Use AES.
+        ///     Initialize an aes key creator.
         /// </summary>
-        /// <returns>The entry point for using aes.</returns>
-        IAes UseAes();
+        /// <returns>A key creator for aes secret keys.</returns>
+        IAesKeyCreator UseAes();
 
         /// <summary>
         ///     Use RSA.
