@@ -26,4 +26,10 @@
     <ProjectReference Include="..\Md.Crypto\Md.Crypto.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="lorem.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

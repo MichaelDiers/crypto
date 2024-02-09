@@ -1,27 +1,60 @@
 ﻿namespace Md.Crypto.Test.Algorithms
 {
+    using System.Text;
     using Md.Crypto.Contracts.Algorithms;
-    using Md.Crypto.Contracts.Base;
 
     /// <summary>
     ///     Tests for <see cref="IAes" />.
     /// </summary>
     public class AesTests
     {
-        [Fact]
-        public void Build()
-        {
-            var aes = CryptoFactory.Create().UseAes().Build();
+        /// <summary>
+        ///     The file that contains the plain test text.
+        /// </summary>
+        private const string TestFile = "lorem.txt";
 
-            Assert.IsAssignableFrom<ISymmetricBuildResult>(aes);
+        /// <summary>
+        ///     The test text that will be encrypted.
+        /// </summary>
+        private readonly string testText = File.ReadAllText(
+            AesTests.TestFile,
+            Encoding.UTF8);
+
+        [Fact]
+        public void EncryptUsingText()
+        {
+            var result = CryptoFactory.Create().UseAes().Encrypt(this.testText);
+
+            Assert.IsAssignableFrom<IAesResult>(result);
         }
 
         [Fact]
-        public void SetKeySize()
+        public void EncryptUsingTextAndKeySize()
         {
-            var aes = CryptoFactory.Create().UseAes().SetKeySize(1000);
+            const int keySize = 128;
 
-            Assert.IsAssignableFrom<IBuilder<ISymmetricBuildResult>>(aes);
+            var result = CryptoFactory.Create()
+            .UseAes()
+            .Encrypt(
+                keySize,
+                this.testText);
+
+            Assert.IsAssignableFrom<IAesResult>(result);
+        }
+
+        [Fact]
+        public void EncryptUsingTextKeyAndIv()
+        {
+            var initResult = CryptoFactory.Create().UseAes().Encrypt(this.testText);
+
+            var result = CryptoFactory.Create()
+            .UseAes()
+            .Encrypt(
+                initResult.Key,
+                initResult.Iv,
+                this.testText);
+
+            Assert.IsAssignableFrom<IAesResult>(result);
         }
     }
 }

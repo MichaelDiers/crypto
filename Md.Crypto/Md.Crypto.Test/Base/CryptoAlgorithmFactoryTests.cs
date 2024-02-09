@@ -18,8 +18,6 @@
             var aes = factory.UseAes();
 
             Assert.IsAssignableFrom<IAes>(aes);
-            Assert.IsAssignableFrom<IBuilder<ISymmetricBuildResult>>(aes);
-            Assert.IsAssignableFrom<IKeySize<IBuilder<ISymmetricBuildResult>, ISymmetricBuildResult>>(aes);
         }
 
         /// <summary>
@@ -32,8 +30,6 @@
             var rsa = factory.UseRsa();
 
             Assert.IsAssignableFrom<IRsa>(rsa);
-            Assert.IsAssignableFrom<IBuilder<IAsymmetricBuildResult>>(rsa);
-            Assert.IsAssignableFrom<IKeySize<IBuilder<IAsymmetricBuildResult>, IAsymmetricBuildResult>>(rsa);
         }
     }
 }
