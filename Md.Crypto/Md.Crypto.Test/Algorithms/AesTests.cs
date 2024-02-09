@@ -21,6 +21,23 @@
             Encoding.UTF8);
 
         [Fact]
+        public void Decrypt()
+        {
+            var encrypted = CryptoFactory.Create().UseAes().Encrypt(this.testText);
+
+            var actual = CryptoFactory.Create()
+            .UseAes()
+            .Decrypt(
+                encrypted.Key,
+                encrypted.Iv,
+                encrypted.Text);
+
+            Assert.Equal(
+                this.testText,
+                actual);
+        }
+
+        [Fact]
         public void EncryptUsingText()
         {
             var result = CryptoFactory.Create().UseAes().Encrypt(this.testText);

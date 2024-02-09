@@ -6,6 +6,15 @@
     public interface IAes
     {
         /// <summary>
+        ///     Decrypts the specified text.
+        /// </summary>
+        /// <param name="iv">The initialization vector.</param>
+        /// <param name="text">The encrypted text.</param>
+        /// <param name="key">The secret key.</param>
+        /// <returns>The decryption result.</returns>
+        string Decrypt(byte[] key, byte[] iv, byte[] text);
+
+        /// <summary>
         ///     Encrypts the specified text.
         /// </summary>
         /// <param name="text">The text.</param>

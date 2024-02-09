@@ -13,6 +13,34 @@
         private const int DefaultKeySize = 256;
 
         /// <summary>
+        ///     Decrypts the specified text.
+        /// </summary>
+        /// <param name="iv">The initialization vector.</param>
+        /// <param name="text">The encrypted text.</param>
+        /// <param name="key">The secret key.</param>
+        /// <returns>The decryption result.</returns>
+        public string Decrypt(byte[] key, byte[] iv, byte[] text)
+        {
+            using var aes = System.Security.Cryptography.Aes.Create();
+            aes.Key = key;
+            aes.IV = iv;
+
+            var decryptor = aes.CreateDecryptor(
+                aes.Key,
+                aes.IV);
+
+            using var memoryStream = new MemoryStream(text);
+            using var cryptoStream = new CryptoStream(
+                memoryStream,
+                decryptor,
+                CryptoStreamMode.Read);
+
+            using var streamReader = new StreamReader(cryptoStream);
+
+            return streamReader.ReadToEnd();
+        }
+
+        /// <summary>
         ///     Encrypts the specified text.
         /// </summary>
         /// <param name="text">The text.</param>
@@ -62,9 +90,10 @@
                 encryptor,
                 CryptoStreamMode.Write);
 
-            using var streamWriter = new StreamWriter(cryptoStream);
-
-            streamWriter.Write(text);
+            using (var streamWriter = new StreamWriter(cryptoStream))
+            {
+                streamWriter.Write(text);
+            }
 
             var encrypted = memoryStream.ToArray();
 
